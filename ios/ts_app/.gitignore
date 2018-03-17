@@ -1,0 +1,6 @@
+/AppDelegate.h
+/AppDelegate.m
+/Info.plist
+/main.m
+*.gitignore
+/.gitignore
