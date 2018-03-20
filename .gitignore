@@ -1,0 +1,7 @@
+/App.js
+/app.json
+/index.js
+/package-lock.json
+/package.json
+/yarn.lock
+*.gitignore
