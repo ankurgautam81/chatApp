@@ -15,13 +15,13 @@ import {
 import { DrawerNavigator, NavigationActions, StackNavigator } from 'react-navigation';
 import {isEmpty} from 'lodash';
 import LoginPage from '../screens/Login'
+import routes from '../Route/index'
 const userId = '';
-import Login from '../screens/Login'
+/*const App = StackNavigator(routes);*/
+const RootStack = StackNavigator(routes, {initialRouteName: 'Home',}
+);
 
-/*const App = StackNavigator({
-    Login: { screen: Login },
-});*/
-export default class Routes extends Component {
+ class Routes extends Component {
 
 
     componentDidMount = async ()=>{
@@ -34,14 +34,17 @@ export default class Routes extends Component {
     render() {
         return (
             <View>
-                {
+                /*{
                     !isEmpty(userId) ? <View>
                         <Text>get user id</Text>
                     </View>
                     :<LoginPage/>
-                }
+                }*/
+                <RootStack/>
             </View>
         );
     }
 }
+export default Routes;
+
 

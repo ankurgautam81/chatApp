@@ -6,6 +6,9 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import ToastAndroid from 'react-native-simple-toast';
+
+import store from 'react-native-simple-store';
 import {
     Platform,
     StyleSheet,
@@ -20,13 +23,23 @@ import {
 } from 'react-native';
 import {isEmpty} from 'lodash';
 import {loginDetails} from '../actions/Login'
+import { users } from '../constants/index'
 
 class Login extends Component {
+
     state = {
             loginScreen:true,
-            userName: '',
+            user: '',
             password:'',
         };
+    componentWillMount= async() =>{
+        store.get('user').then(user => {this.setState({user:user})})
+
+        console.log('****login****',this.state.user)
+        if (!isEmpty(this.state.user)){
+            this.props.navigation.navigate('Home', {screen:'Home'})
+        }
+    }
 
     toggleLoginRegister = (screen) => {
         if(screen == 'login'){
@@ -36,34 +49,42 @@ class Login extends Component {
             this.setState({loginScreen:true})
         }
     }
-    loginClick = async () => {
+    loginClick = async(navigate) => {
         let userId = this.refs.userId._lastNativeText
         let password = this.refs.password._lastNativeText
-        console.log(this.refs.password._lastNativeText)
+        store.get('user').then(user => {this.setState({user:user})})
+        console.log('*****login***',this.state.user)
+
         if(!isEmpty(userId) && !isEmpty(password)){
+            /*this is important line for apiCall
             const loginParameters=  {events : "login", uname : userId, password:password}
+            let loginRes = await this.props.loginDetails(loginParameters)*/
 
-            let loginRes = await this.props.loginDetails(loginParameters)
-            console.log(loginRes)
+            if(userId === users.userName && password === users.password){
+                store.save('user',{id:users.uId})
+              //  store.get('user').then(user => {this.setState({user:user})})
+                store.get('user').then(user => {console.log(user)})
+                console.log('*****',this.state.user)
 
+                if(!isEmpty(this.state.user)){
+                    ToastAndroid.show('Login Successfully', ToastAndroid.SHORT);
+                    navigate('Home', {screen:'Home'})
+                }else {
+                    ToastAndroid.show('Login Failed', ToastAndroid.SHORT);
+                }
+
+            }else {
+                ToastAndroid.show('Username or password is wrong !', ToastAndroid.SHORT);
+            }
         }else {
-            console.log('id or password is missing')
+            ToastAndroid.show('Username or password is missing !', ToastAndroid.SHORT);
         }
-
-
-        /* {
-        "events":"login",
-            "uname":"ankur2",
-            "email":"ankur.gr93@gmail",
-            "password":"165guhj"
-    }*/
-
-
     }
 
     render() {
+        const { navigate } = this.props.navigation;
         return (
-            <View>
+            <View style={{padding:20}}>
             {
                 this.state.loginScreen ? <View>
                 <Text>USERNAME</Text>
@@ -78,7 +99,7 @@ class Login extends Component {
                 />
 
                 <Button
-                    onPress={()=> this.loginClick()}
+                    onPress={()=> this.loginClick(navigate)}
                     title="Login"
                     color="#841584"
                     accessibilityLabel="Login to chat"
@@ -86,7 +107,7 @@ class Login extends Component {
 
                 <TouchableOpacity  style={{height: 40, alignSelf:'center',marginTop:20}}
                                    onPress={()=>this.toggleLoginRegister('login')} >
-                    <Text>Register? hbhijk</Text>
+                    <Text>Register?</Text>
                 </TouchableOpacity>
             </View>
                 :<View>
